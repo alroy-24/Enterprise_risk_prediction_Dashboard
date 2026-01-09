@@ -1,6 +1,6 @@
 # Enterprise Risk Intelligence Platform (ERIP) – Consulting-Style MVP
 
-This repo is a runnable scaffold for a KPMG-style Enterprise Risk Intelligence Platform. It ingests real-world formats (Excel/CSV/Postgres), engineers risk features, trains explainable models, runs scenario/stress tests, aggregates multi-dimensional risk, and serves CXO-ready visuals in Streamlit.
+This repo is a runnable scaffold for a Enterprise Risk Intelligence Platform. It ingests real-world formats (Excel/CSV/Postgres), engineers risk features, trains explainable models, runs scenario/stress tests, aggregates multi-dimensional risk, and serves CXO-ready visuals in Streamlit.
 
 ## Quickstart
 
