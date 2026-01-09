@@ -1,0 +1,70 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment variables
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Great Expectations
+great_expectations/checkpoints/
+great_expectations/expectations/
+.great_expectations/
+
+# Evidently
+evidently_workspace/
+
+# Logs
+*.log
+
+# Data (optional - uncomment if you don't want to commit data)
+# data/*.csv
+# data/*.xlsx
+
+# Model artifacts (optional - uncomment if models are large)
+# models/
+# *.pkl
+# *.joblib
+

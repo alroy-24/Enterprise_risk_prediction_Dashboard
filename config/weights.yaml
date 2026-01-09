@@ -1,0 +1,11 @@
+financial_weight: 0.45
+operational_weight: 0.35
+compliance_weight: 0.20
+
+# Optional thresholds to flag elevated risk on each dimension
+thresholds:
+  financial: 0.6
+  operational: 0.5
+  compliance: 0.4
+
+

@@ -1,0 +1,36 @@
+data:
+  source: "data/sample_financials.csv"   # can be replaced with "postgres"
+  postgres:
+    uri: "postgresql://user:pass@host:5432/db"
+    table: "financials"
+  target: "risk_flag"
+  date_column: "as_of_date"
+  id_column: "company_id"
+
+model:
+  test_size: 0.2
+  random_state: 42
+  use_mlflow: false
+  enable_shap: true
+  # Switch to true only if xgboost is installed; fallback to Logistic otherwise.
+  train_xgboost: true
+  logistic:
+    C: 1.0
+    penalty: "l2"
+    max_iter: 500
+  xgboost:
+    max_depth: 4
+    n_estimators: 120
+    learning_rate: 0.08
+    subsample: 0.9
+    colsample_bytree: 0.8
+
+governance:
+  # Set to a tracking URI to persist runs
+  mlflow_tracking_uri: ""
+  # Great Expectations expectations suite path (optional)
+  expectations_path: ""
+  # Evidently monitoring configuration placeholder
+  enable_evidently: false
+
+

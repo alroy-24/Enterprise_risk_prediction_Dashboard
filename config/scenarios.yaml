@@ -1,0 +1,55 @@
+scenarios:
+  baseline:
+    description: "Observed metrics without stress."
+    shocks: {}
+  revenue_collapse:
+    description: "30% revenue drop; EBITDA margin compresses; higher defaults."
+    shocks:
+      revenue: -0.30
+      ebitda_margin: -0.15
+      default_probability: 0.10
+  debt_shock:
+    description: "Debt refinanced at higher rates; leverage worsens."
+    shocks:
+      debt: 0.25
+      interest_expense: 0.20
+  compliance_breach:
+    description: "Significant compliance incident impacting reputation and costs."
+    shocks:
+      compliance_incidents: 2
+      legal_costs: 0.10
+  industry_downturn:
+    description: "Sector downturn; demand softens; working capital tightens."
+    shocks:
+      revenue: -0.12
+      working_capital: -0.10
+      default_probability: 0.05
+  # Regulatory Stress Scenarios (Basel/IFRS-style)
+  basel_adverse:
+    description: "Basel III Adverse Scenario: Severe recession, credit losses spike, liquidity tightens."
+    shocks:
+      revenue: -0.20
+      default_probability: 0.15
+      working_capital: -0.25
+      interest_expense: 0.30
+  basel_severe:
+    description: "Basel III Severely Adverse: Deep recession, systemic stress, capital erosion."
+    shocks:
+      revenue: -0.40
+      default_probability: 0.25
+      working_capital: -0.40
+      debt: 0.15
+      interest_expense: 0.50
+  regulatory_capital_shock:
+    description: "Regulatory capital requirement increase; forced deleveraging."
+    shocks:
+      debt: -0.20
+      revenue: -0.10
+      working_capital: -0.15
+  ifrs_impairment:
+    description: "IFRS 9 Expected Credit Loss: Forward-looking impairment triggers."
+    shocks:
+      default_probability: 0.12
+      accounts_receivable: -0.15
+      revenue: -0.08
+
