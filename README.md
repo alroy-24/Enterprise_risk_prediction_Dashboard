@@ -1,10 +1,22 @@
-# Enterprise Risk Intelligence Platform (ERIP) – Consulting-Style MVP
 
+<<<<<<< HEAD
 **Big-4 / Enterprise aligned risk analytics platform** with **SQL-first data analysis**, market risk metrics (VaR, PnL attribution), and BI-style dashboards. 
 
 This repo demonstrates **SQL skills**, **time-series analysis**, **market data processing** (equities, fixed income, spreads), and **value-at-risk calculations** alongside traditional enterprise risk features. Built for data analysts working in finance/risk analytics.
+=======
+>>>>>>> 5cff09e42f6dca21bb7ede8c4db9d8c774f97485
 
-## Quickstart
+---
+
+# **Enterprise Risk Intelligence Platform (ERIP)**
+
+### **Consulting-Style Risk Analytics MVP**
+
+ERIP is a runnable MVP scaffold designed for enterprise consulting use-cases such as Financial Risk, Operational Risk, Compliance Monitoring, and CXO Decision Support. It ingests real-world enterprise data (CSV/Excel/Postgres), engineers risk signals, trains explainable models, simulates macro/micro stress scenarios, aggregates portfolio risk, and exposes CXO-ready visualizations in Streamlit.
+
+---
+
+## 🚀 **Quickstart**
 
 ```bash
 python -m venv .venv
@@ -13,8 +25,9 @@ pip install -r requirements.txt
 streamlit run src/app.py
 ```
 
-## What’s included
+---
 
+<<<<<<< HEAD
 ### SQL & Data Analysis (Industry-Standard)
 - **SQL-first architecture**: PostgreSQL integration with industry-standard queries
 - **SQL views and stored procedures** for risk analytics (aggregations, window functions, CTEs)
@@ -36,8 +49,86 @@ streamlit run src/app.py
 - **Risk ratings**: Credit-style ratings (AAA to D)
 - **Peer benchmarking**: Industry/region comparisons
 - **Governance**: MLflow, Great Expectations, Evidently hooks (optional)
+=======
+## 📦 **Core Capabilities**
+>>>>>>> 5cff09e42f6dca21bb7ede8c4db9d8c774f97485
 
-## Repo layout
+### **1. Data Layer**
+
+* Loaders for CSV, Excel, and Postgres
+* Basic validation hooks for schema & data checks
+* Swap-ready for client data feeds
+
+### **2. Feature Engineering**
+
+Transforms raw financial/compliance metrics into risk signals:
+
+* Volatility
+* Leverage & Debt Pressure
+* Liquidity & Solvency
+* Growth Stability
+* Compliance & Penalties Normalization
+* One-hot / Target / Label Encodings for industry & metadata
+
+### **3. ML Models (Explainable by Design)**
+
+Included:
+
+* **Logistic Regression** → audit-friendly baseline
+* **XGBoost** → stronger non-linear performance
+
+Both wrapped in pipelines (scaler + encoder + model) for reproducibility.
+
+### **4. Explainability**
+
+* SHAP global summary
+* SHAP per-record breakdowns for decision review
+* Used for recommendations & scenario outcome interpretation
+
+### **5. Scenario & Stress Engine**
+
+Configurable shocks via `config/scenarios.yaml`, e.g.:
+
+* Revenue collapse
+* Debt shock
+* Market downturn
+* Compliance breach
+
+Outputs scenario-driven portfolio risk shifts.
+
+### **6. Risk Aggregation**
+
+Multi-dimensional scoring across axes:
+
+* Financial
+* Operational
+* Compliance
+* Strategic (optional extension)
+
+Weighted aggregation via `config/weights.yaml`.
+
+### **7. Recommendations System**
+
+Two signal pathways:
+
+* Threshold & rule-based detection
+* SHAP contribution-driven recommendations
+
+Maps risk signals → remediation suggestions.
+
+### **8. Governance & MLOps Stubs**
+
+Prepared for enterprise governance:
+
+* MLflow tracking (off by default)
+* Great Expectations validation templates
+* Evidently drift detection hooks
+
+These are optionally toggled via config for PoC vs. Go-Live modes.
+
+---
+
+## 🗂 **Repository Structure**
 
 ```
 config/
@@ -53,6 +144,7 @@ src/
   features.py           # financial ratio engineering
   models.py             # ML training/inference
   explainability.py     # SHAP integration
+<<<<<<< HEAD
   scenarios.py          # stress testing engine
   aggregation.py        # risk aggregation
   recommendations.py    # remediation suggestions
@@ -65,10 +157,17 @@ src/
   governance/           # MLflow/GE/Evidently hooks
 sql/
   risk_analytics_queries.sql  # Industry-standard SQL queries
+=======
+  scenarios.py          # scenario/stress engine
+  aggregation.py        # risk aggregation logic
+  recommendations.py    # remediation suggestions
+  governance/           # MLflow/GE/Evidently stubs
+>>>>>>> 5cff09e42f6dca21bb7ede8c4db9d8c774f97485
 ```
 
-## How to demo
+---
 
+<<<<<<< HEAD
 1) Edit or replace `data/sample_financials.csv` with client data (or configure Postgres in `config/model_config.yaml`).
 2) Run `streamlit run src/app.py` and explore:
    - **Portfolio Overview**: Risk scorecards, heatmaps, risk ratings
@@ -96,13 +195,16 @@ from sqlalchemy import create_engine
 engine = create_engine("postgresql://user:pass@host:5432/db")
 df = get_high_risk_companies(engine)
 ```
+=======
+## 🖥 **Demo Guide**
+>>>>>>> 5cff09e42f6dca21bb7ede8c4db9d8c774f97485
 
-## Governance notes
+1. Replace `data/sample_financials.csv` with realistic client data
+   or configure Postgres in `config/model_config.yaml`.
 
-- Deep learning is intentionally omitted: transparency and regulatory defensibility take priority.
-- MLflow hooks are present but off by default; enable and set a tracking URI when needed.
-- Great Expectations/Evidently hooks are stubbed for fast PoC; wire to production checks/monitoring for go-live.
+2. Adjust weights & scenarios in `config/`:
 
+<<<<<<< HEAD
 ## Skills Demonstrated
 
 **SQL & Data Analysis:**
@@ -134,5 +236,95 @@ df = get_high_risk_companies(engine)
 - Add Tableau/PowerBI connectors
 - Deploy to cloud (AWS, Azure, GCP) or Railway/Streamlit Cloud
 - Add CI/CD (GitHub Actions) for automated testing
+=======
+   * `weights.yaml`: change risk taxonomy emphasis
+   * `scenarios.yaml`: define stress shocks
+
+3. Run the UI:
+
+```bash
+streamlit run src/app.py
+```
+
+4. Explore:
+
+* **Portfolio dashboards** with risk scores & distributions
+* **SHAP explanations** for transparency & client trust
+* **Scenario simulator** for macro/micro shocks
+* **Recommendations** tied to risk drivers
+* **Audit-friendly model insights** for CXO / Risk teams
+
+---
+
+## 🛡 **Governance Notes**
+
+* Deep learning intentionally omitted for **regulatory defensibility**
+* Transparency is prioritized for:
+  ✔ Model audits
+  ✔ Client trust
+  ✔ Risk & compliance reviews
+* MLflow is present but **off by default** (enable for enterprise)
+* Great Expectations & Evidently stubs support:
+
+  * Data quality checks
+  * Drift monitoring
+  * Model lifecycle governance
+
+---
+
+## 🧱 **Tech Stack (MVP)**
+
+* **Python 3.x**
+* **Streamlit** (UI)
+* **Pandas / NumPy** (Data)
+* **Scikit-Learn / XGBoost** (Models)
+* **SHAP** (Explainability)
+* **PyYAML** (Config)
+* **SQLAlchemy / psycopg2** (Postgres)
+* **MLflow / GE / Evidently** (Governance stubs)
+
+---
+
+## 🧭 **Positioning for Consulting & Risk Analytics**
+
+Use-cases include:
+
+* Enterprise Risk Management (ERM)
+* Financial due diligence (DD)
+* Counterparty/vendor screening
+* Portfolio credit/operational risk
+* Compliance & audit review automation
+* Stress testing & scenario planning
+
+Designed for:
+
+* Big-4 consulting PoCs
+* Internal risk teams
+* BFSI, Fintech, Enterprise Ops
+
+---
+
+## 🚀 **Next Steps for Production**
+
+Suggested enhancements if taken beyond PoC:
+
+| Category         | Enhancements                             |
+| ---------------- | ---------------------------------------- |
+| **Security**     | AuthZ/AuthN (Keycloak / OAuth2)          |
+| **Deployment**   | Docker + ECS/EC2/Streamlit Cloud         |
+| **Data Quality** | Full Great Expectations suite            |
+| **Monitoring**   | Evidently dashboards + MLflow            |
+| **Models**       | Time-series stability + ensemble methods |
+| **Integrations** | SFTP, S3, Kafka, Snowflake, GSheets      |
+| **CI/CD**        | Github Actions for lint/test packaging   |
+
+---
+
+## 🏁 **Summary**
+
+ERIP provides a consulting-grade, explainable, scenario-driven risk analytics scaffold that can be rapidly adapted to client environments and risk taxonomies. It balances **explainability**, **business value**, and **governance readiness**, making it suitable for enterprise risk PoCs and quick demos.
+
+---
+>>>>>>> 5cff09e42f6dca21bb7ede8c4db9d8c774f97485
 
 
