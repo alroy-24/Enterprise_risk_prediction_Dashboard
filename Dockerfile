@@ -18,7 +18,12 @@ COPY data ./data
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "src/app.py", "--server.address=0.0.0.0", "--server.port=8501"]
+# Copy startup script
+COPY start.sh .
+RUN chmod +x start.sh
+
+# Use PORT env var if available (Railway), otherwise default to 8501
+CMD ["./start.sh"]
 
 
 

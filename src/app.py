@@ -16,6 +16,16 @@ from aggregation import aggregate_scores
 from recommendations import generate_recommendations
 from risk_rating import add_risk_ratings, get_rating_color
 from benchmarking import compute_peer_benchmarks, add_peer_comparison, get_peer_summary
+from market_data import generate_market_data, calculate_returns, merge_market_with_financials
+from var_calculations import (
+    parametric_var, historical_var, monte_carlo_var,
+    calculate_portfolio_var, calculate_individual_var
+)
+from pnl_attribution import calculate_pnl, attribute_pnl_by_factor, calculate_portfolio_pnl
+from sql_queries import (
+    get_high_risk_companies, get_industry_benchmarks, get_time_series_risk,
+    HIGH_RISK_COMPANIES_QUERY, INDUSTRY_BENCHMARKS_QUERY, TIME_SERIES_RISK_QUERY
+)
 
 
 st.set_page_config(page_title="Enterprise Risk Intelligence Platform", layout="wide")
@@ -365,6 +375,177 @@ def export_section(df_scored: pd.DataFrame):
         )
 
 
+@st.cache_data
+def generate_market_data_cached():
+    """Generate market data (cached for performance)."""
+    return generate_market_data(n_companies=20)
+
+
+def market_risk_dashboard(df_scored: pd.DataFrame):
+    """
+    Market Risk Dashboard - Industry-standard analysis.
+    Includes VaR, PnL attribution, market data visualization.
+    """
+    st.subheader("📈 Market Risk & Time-Series Analysis")
+    st.caption("**Industry-standard** market risk metrics: VaR, PnL attribution, equity/fixed income analysis")
+    
+    # Generate market data
+    try:
+        market_df = generate_market_data_cached()
+        
+        # Ensure required columns exist
+        if "equity_price" not in market_df.columns:
+            st.error("Market data missing required columns. Please regenerate market data.")
+            return
+        
+        # Calculate returns with error handling
+        try:
+            market_df_returns = calculate_returns(market_df)
+        except Exception as e:
+            st.error(f"Error calculating returns: {e}")
+            st.info("Using market data without returns calculations.")
+            market_df_returns = market_df.copy()
+        
+        # Merge with financial data (optional, not required for VaR/PnL)
+        try:
+            df_with_market = merge_market_with_financials(market_df_returns, df_scored)
+        except Exception as e:
+            st.warning(f"Could not merge market data with financials: {e}")
+            df_with_market = df_scored.copy()
+        
+        # VaR Section
+        st.subheader("💼 Value at Risk (VaR) Analysis")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            var_method = st.selectbox("VaR Method", ["parametric", "historical", "monte_carlo"])
+            var_confidence = st.slider("Confidence Level", 0.90, 0.99, 0.95, 0.01)
+        
+        with col2:
+            var_holding_period = st.slider("Holding Period (days)", 1, 30, 1)
+        
+        # Calculate individual VaR
+        if "daily_return" in market_df_returns.columns:
+            returns_pivot = market_df_returns.pivot_table(
+                index="date", columns="company_id", values="daily_return"
+            ).dropna()
+            
+            if len(returns_pivot) > 10:
+                individual_var = calculate_individual_var(returns_pivot, method=var_method, confidence_level=var_confidence)
+                
+                if len(individual_var) > 0:
+                    st.dataframe(individual_var.sort_values("var"), use_container_width=True)
+                    
+                    # VaR Visualization
+                    fig = px.bar(
+                        individual_var.head(15),
+                        x="company_id",
+                        y="var",
+                        title=f"VaR by Company ({var_method.title()}, {var_confidence:.0%} confidence)",
+                        labels={"var": "VaR", "company_id": "Company ID"}
+                    )
+                    fig.update_xaxes(tickangle=45)
+                    st.plotly_chart(fig, use_container_width=True)
+        
+        # PnL Attribution Section
+        st.subheader("💰 PnL Attribution")
+        
+        if "equity_price" in market_df_returns.columns:
+            pnl_results = calculate_pnl(market_df_returns)
+            
+            if len(pnl_results) > 0:
+                st.dataframe(pnl_results.sort_values("pnl", ascending=False), use_container_width=True)
+                
+                # PnL Visualization
+                col1, col2 = st.columns(2)
+                with col1:
+                    fig = px.bar(
+                        pnl_results.head(15),
+                        x="company_id",
+                        y="pnl",
+                        title="PnL by Company",
+                        labels={"pnl": "PnL ($)", "company_id": "Company ID"}
+                    )
+                    fig.update_xaxes(tickangle=45)
+                    st.plotly_chart(fig, use_container_width=True)
+                
+                with col2:
+                    fig = px.bar(
+                        pnl_results.head(15),
+                        x="company_id",
+                        y="pnl_pct",
+                        title="PnL % by Company",
+                        labels={"pnl_pct": "PnL (%)", "company_id": "Company ID"}
+                    )
+                    fig.update_xaxes(tickangle=45)
+                    st.plotly_chart(fig, use_container_width=True)
+        
+        # Market Data Visualization
+        st.subheader("📊 Market Data: Equity Prices & Yields")
+        
+        selected_company = st.selectbox("Select Company for Market Data", market_df_returns["company_id"].unique())
+        
+        if selected_company:
+            company_market = market_df_returns[market_df_returns["company_id"] == selected_company].sort_values("date")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                fig = px.line(
+                    company_market,
+                    x="date",
+                    y="equity_price",
+                    title=f"Equity Price Trend: {selected_company}",
+                    labels={"equity_price": "Price ($)", "date": "Date"}
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            
+            with col2:
+                fig = px.line(
+                    company_market,
+                    x="date",
+                    y=["yield", "credit_spread"],
+                    title=f"Yield & Credit Spread: {selected_company}",
+                    labels={"value": "Rate", "date": "Date"}
+                )
+                st.plotly_chart(fig, use_container_width=True)
+    
+    except Exception as e:
+        st.warning(f"Market data generation failed: {e}")
+        st.info("This feature requires market data. In production, this would connect to real market data feeds.")
+
+
+def sql_queries_section():
+    """SQL Queries Section - Show example SQL queries for risk analytics."""
+    st.subheader("🗄️ SQL Queries for Risk Analytics")
+    st.caption("**Industry-standard SQL** - Demonstrates SQL skills: aggregations, window functions, CTEs, subqueries")
+    
+    query_type = st.selectbox(
+        "Select Query Type",
+        ["High-Risk Companies", "Industry Benchmarks", "Time-Series Risk Trends", "VaR by Company", "PnL Attribution"]
+    )
+    
+    queries = {
+        "High-Risk Companies": HIGH_RISK_COMPANIES_QUERY,
+        "Industry Benchmarks": INDUSTRY_BENCHMARKS_QUERY,
+        "Time-Series Risk Trends": TIME_SERIES_RISK_QUERY,
+    }
+    
+    if query_type in queries:
+        st.code(queries[query_type], language="sql")
+        st.info("💡 **In production**, these queries would execute against your PostgreSQL database using the `sql_queries` module.")
+        
+        # Show how to execute
+        with st.expander("How to Execute (Python Code)"):
+            st.code(f"""
+from sql_queries import get_high_risk_companies, get_industry_benchmarks
+from sqlalchemy import create_engine
+
+engine = create_engine("postgresql://user:pass@host:5432/db")
+df = get_{query_type.lower().replace(' ', '_')}(engine)
+            """, language="python")
+
+
 if __name__ == "__main__":
     layout_header()
     
@@ -379,11 +560,15 @@ if __name__ == "__main__":
     st.sidebar.title("Navigation")
     page = st.sidebar.radio(
         "Select View",
-        ["Portfolio Overview", "Peer Benchmarking", "Explainability", "Stress Testing", "Recommendations", "Export"]
+        ["Portfolio Overview", "Market Risk", "SQL Queries", "Peer Benchmarking", "Explainability", "Stress Testing", "Recommendations", "Export"]
     )
     
     if page == "Portfolio Overview":
         portfolio_view(df_scored)
+    elif page == "Market Risk":
+        market_risk_dashboard(df_scored)
+    elif page == "SQL Queries":
+        sql_queries_section()
     elif page == "Peer Benchmarking":
         peer_benchmarking_section(df_scored)
     elif page == "Explainability":
