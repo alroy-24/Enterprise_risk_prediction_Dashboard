@@ -4,7 +4,7 @@
 
 # # **Enterprise Risk Intelligence Platform (ERIP)**
 
-### **Big-4 / Enterprise-Aligned Risk & Market Analytics Platform**
+### **Enterprise-Aligned Risk & Market Analytics Platform**
 
 ERIP is a runnable **risk analytics & decision support platform** built for **financial/risk analysts and data analysts** in enterprise & consulting environments such as **Big-4, Morgan Stanley, Goldman Sachs, BNY Mellon, Citi, Barclays, and FinTech/BFSI** teams.
 
