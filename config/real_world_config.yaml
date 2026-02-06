@@ -1,0 +1,37 @@
+data_sources:
+  available:
+  - sample
+  - yahoo
+  - edgar
+  - lendingclub
+  - fred
+  default: sample
+  edgar:
+    default_ciks:
+    - 0000320193
+    - 0000789019
+    - 0000019617
+    - '0000051143'
+    - 0000104169
+    years: 3
+  fred:
+    api_key: null
+    default_series:
+    - GDP
+    - UNRATE
+    - FEDFUNDS
+    - DGS10
+  lendingclub:
+    data_path: data/lendingclub_loan_data.csv
+    sample_size: 10000
+  yahoo:
+    default_tickers:
+    - AAPL
+    - MSFT
+    - JPM
+    - XOM
+    - WMT
+    - GOOGL
+    - AMZN
+    - META
+    period: 5y
