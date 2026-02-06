@@ -26,11 +26,6 @@ from sql_queries import (
     get_high_risk_companies, get_industry_benchmarks, get_time_series_risk,
     HIGH_RISK_COMPANIES_QUERY, INDUSTRY_BENCHMARKS_QUERY, TIME_SERIES_RISK_QUERY
 )
-from improve_charts import (
-    create_risk_distribution_chart, create_industry_risk_chart,
-    create_financial_health_chart, create_risk_scatter_chart,
-    create_correlation_heatmap, create_portfolio_summary_cards, create_trend_chart
-)
 
 
 st.set_page_config(page_title="Enterprise Risk Intelligence Platform", layout="wide")
@@ -38,53 +33,19 @@ st.set_page_config(page_title="Enterprise Risk Intelligence Platform", layout="w
 
 @st.cache_data
 def load_dataset():
-    # Try fixed expanded dataset first, fallback to expanded, then original
-    try:
-        df = pd.read_csv("data/expanded_real_world_financials_fixed.csv")
-        st.info("📊 Using expanded real-world dataset with risk flags (2,144 records)")
-    except FileNotFoundError:
-        try:
-            df = pd.read_csv("data/expanded_real_world_financials.csv")
-            st.info("📊 Using expanded real-world dataset (2,144 records)")
-        except FileNotFoundError:
-            try:
-                df = pd.read_csv("data/real_world_financials.csv")
-                st.info("📊 Using real-world dataset (15 records)")
-            except FileNotFoundError:
-                # Fallback to original config-based loading
-                cfg = config.load_model_config()
-                source = cfg["data"]["source"]
-                if source.startswith("data/"):
-                    path = Path(source)
-                    ds = DataSource(path=path)
-                elif source == "postgres":
-                    ds = DataSource(
-                        postgres_uri=cfg["data"]["postgres"]["uri"],
-                        table=cfg["data"]["postgres"]["table"],
-                    )
-                else:
-                    raise ValueError("Unsupported data source.")
-                df = load_data(ds)
-                st.info("📊 Using sample dataset from config")
-    
-    # Load config separately
-    try:
-        cfg = config.load_model_config()
-    except:
-        # Default config if loading fails
-        cfg = {
-            "data": {"source": "data/sample_financials.csv", "target": "risk_flag"},
-            "model": {"random_state": 42},
-            "scenarios": {},
-            "weights": {}
-        }
-    
-    # Ensure target column exists
-    if "risk_flag" not in df.columns:
-        df["risk_flag"] = 0
-        st.warning("⚠️ Risk flag column not found, setting all to 0")
-    
-    df = engineer_features(df)
+    cfg = config.load_model_config()
+    source = cfg["data"]["source"]
+    if source.startswith("data/"):
+        path = Path(source)
+        ds = DataSource(path=path)
+    elif source == "postgres":
+        ds = DataSource(
+            postgres_uri=cfg["data"]["postgres"]["uri"],
+            table=cfg["data"]["postgres"]["table"],
+        )
+    else:
+        raise ValueError("Unsupported data source.")
+    df = load_data(ds)
     return df, cfg
 
 
@@ -104,12 +65,20 @@ def get_predictions(trained, df_feat: pd.DataFrame):
     return df_feat, pipeline
 
 
-def layout_header(df_scored: pd.DataFrame):
+def layout_header():
     st.title("🏢 Enterprise Risk Intelligence Platform (ERIP)")
     st.caption("**Consulting-grade risk analytics** | Explainable AI | Regulatory stress testing | Peer benchmarking")
     
-    # Dynamic metrics based on actual data
-    create_portfolio_summary_cards(df_scored)
+    # Key metrics summary
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Portfolio Size", "20 companies")
+    with col2:
+        st.metric("Industries", "5 sectors")
+    with col3:
+        st.metric("Regions", "3 regions")
+    with col4:
+        st.metric("Risk Models", "Logistic + XGBoost")
 
 
 def portfolio_view(df_scored: pd.DataFrame):
@@ -155,46 +124,54 @@ def portfolio_view(df_scored: pd.DataFrame):
         height=400
     )
     
-    # Improved Visualizations
-    st.subheader("📈 Risk Analytics Dashboard")
-    
-    # Row 1: Distribution and Industry Comparison
+    # Visualizations
     col1, col2 = st.columns(2)
     
     with col1:
-        # Risk distribution
-        fig_dist = create_risk_distribution_chart(df_filtered, "Risk Probability Distribution")
-        st.plotly_chart(fig_dist, use_container_width=True)
+        # Risk probability by company (with ratings)
+        fig = px.bar(
+            df_filtered.sort_values("predicted_proba", ascending=False).head(15),
+            x="company_id",
+            y="predicted_proba",
+            color="risk_rating",
+            title="Risk Probability by Company (Top 15)",
+            labels={"predicted_proba": "Risk Probability", "company_id": "Company ID"},
+            color_discrete_map={r: get_rating_color(r) for r in df_filtered["risk_rating"].unique()}
+        )
+        fig.update_layout(showlegend=True)
+        st.plotly_chart(fig, use_container_width=True)
     
     with col2:
-        # Industry risk comparison
-        fig_industry = create_industry_risk_chart(df_filtered)
-        st.plotly_chart(fig_industry, use_container_width=True)
+        # Risk distribution by industry
+        fig = px.box(
+            df_filtered,
+            x="industry",
+            y="predicted_proba",
+            title="Risk Distribution by Industry",
+            labels={"predicted_proba": "Risk Probability", "industry": "Industry"}
+        )
+        st.plotly_chart(fig, use_container_width=True)
     
-    # Row 2: Risk vs Leverage and Financial Health
-    col1, col2 = st.columns(2)
+    # Risk heatmap
+    st.subheader("🔥 Risk Heatmap: Key Financial Ratios")
+    heatmap_cols = ["leverage_ratio", "current_ratio", "interest_coverage", "ebitda_margin", "altman_z_score"]
+    heatmap_cols = [c for c in heatmap_cols if c in df_filtered.columns]
     
-    with col1:
-        # Risk vs Leverage scatter plot
-        fig_scatter = create_risk_scatter_chart(df_filtered)
-        st.plotly_chart(fig_scatter, use_container_width=True)
-    
-    with col2:
-        # Financial health radar (top 5 industries)
-        fig_radar = create_financial_health_chart(df_filtered)
-        st.plotly_chart(fig_radar, use_container_width=True)
-    
-    # Row 3: Correlation Heatmap
-    st.subheader("🔗 Risk Factor Correlations")
-    fig_corr = create_correlation_heatmap(df_filtered)
-    st.plotly_chart(fig_corr, use_container_width=True)
-    
-    # Trend analysis if date data available
-    if 'as_of_date' in df_filtered.columns:
-        st.subheader("📊 Risk Trends Over Time")
-        fig_trend = create_trend_chart(df_filtered)
-        if fig_trend:
-            st.plotly_chart(fig_trend, use_container_width=True)
+    if heatmap_cols:
+        heatmap_data = df_filtered.set_index("company_id")[heatmap_cols]
+        # Normalize for visualization
+        heatmap_data_norm = (heatmap_data - heatmap_data.min()) / (heatmap_data.max() - heatmap_data.min() + 1e-6)
+        
+        fig = px.imshow(
+            heatmap_data_norm.T,
+            labels=dict(x="Company", y="Metric", color="Normalized Value"),
+            x=heatmap_data.index.tolist(),
+            y=heatmap_cols,
+            aspect="auto",
+            color_continuous_scale="RdYlGn_r",
+            title="Financial Ratios Heatmap (Red = Higher Risk)"
+        )
+        st.plotly_chart(fig, use_container_width=True)
 
 
 def peer_benchmarking_section(df_scored: pd.DataFrame):
@@ -400,65 +377,11 @@ def export_section(df_scored: pd.DataFrame):
 
 @st.cache_data
 def generate_market_data_cached():
-    """Generate market data (cached for performance) using real companies."""
-    # Load the dataset to get real companies
-    try:
-        df = pd.read_csv("data/expanded_real_world_financials_fixed.csv")
-    except:
-        df = pd.read_csv("data/expanded_real_world_financials.csv")
-    
-    # Generate market data with real companies
-    dates = pd.date_range(start="2024-01-01", end="2024-12-31", freq="D")
-    companies = df['company_id'].unique()
-    
-    data = []
-    np.random.seed(42)
-    
-    for company in companies:
-        # Get company-specific data for realistic parameters
-        company_data = df[df['company_id'] == company].iloc[0]
-        
-        # Base price based on company size (revenue)
-        revenue = company_data.get('revenue', 1e9)
-        base_price = np.clip(np.log10(revenue) * 10, 50, 500)
-        
-        # Generate prices
-        prices = [base_price]
-        returns = np.random.normal(0.0005, 0.02, len(dates) - 1)
-        
-        for ret in returns:
-            prices.append(prices[-1] * (1 + ret))
-        
-        # Yields based on company risk
-        risk = company_data.get('predicted_proba', 0.5)
-        base_yield = 0.02 + risk * 0.04  # Higher risk = higher yield
-        yields = base_yield + np.random.normal(0, 0.001, len(dates))
-        yields = np.clip(yields, 0.01, 0.10)
-        
-        # Credit spreads
-        base_spread = 0.005 + risk * 0.03
-        spreads = base_spread + np.random.normal(0, 0.002, len(dates))
-        spreads = np.clip(spreads, 0, 0.10)
-        
-        # Volatility
-        base_vol = 0.15 + risk * 0.20
-        vols = base_vol + np.random.normal(0, 0.02, len(dates))
-        vols = np.clip(vols, 0.10, 0.50)
-        
-        for i, date in enumerate(dates):
-            data.append({
-                "company_id": company,
-                "date": date,
-                "equity_price": prices[i],
-                "yield": yields[i],
-                "credit_spread": spreads[i],
-                "volatility": vols[i]
-            })
-    
-    return pd.DataFrame(data)
+    """Generate market data (cached for performance)."""
+    return generate_market_data(n_companies=20)
 
 
-def market_risk_section(df_scored: pd.DataFrame):
+def market_risk_dashboard(df_scored: pd.DataFrame):
     """
     Market Risk Dashboard - Industry-standard analysis.
     Includes VaR, PnL attribution, market data visualization.
@@ -592,7 +515,7 @@ def market_risk_section(df_scored: pd.DataFrame):
         st.info("This feature requires market data. In production, this would connect to real market data feeds.")
 
 
-def sql_section(df_scored: pd.DataFrame):
+def sql_queries_section():
     """SQL Queries Section - Show example SQL queries for risk analytics."""
     st.subheader("🗄️ SQL Queries for Risk Analytics")
     st.caption("**Industry-standard SQL** - Demonstrates SQL skills: aggregations, window functions, CTEs, subqueries")
@@ -610,7 +533,7 @@ def sql_section(df_scored: pd.DataFrame):
     
     if query_type in queries:
         st.code(queries[query_type], language="sql")
-        st.info("💡 **In production**, these queries would execute against your PostgreSQL database using `sql_queries` module.")
+        st.info("💡 **In production**, these queries would execute against your PostgreSQL database using the `sql_queries` module.")
         
         # Show how to execute
         with st.expander("How to Execute (Python Code)"):
@@ -621,108 +544,38 @@ from sqlalchemy import create_engine
 engine = create_engine("postgresql://user:pass@host:5432/db")
 df = get_{query_type.lower().replace(' ', '_')}(engine)
             """, language="python")
-    
-    # Export options
-    st.subheader("📤 Export Options")
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        # Excel export
-        output = BytesIO()
-        with pd.ExcelWriter(output, engine='openpyxl') as writer:
-            df_scored.to_excel(writer, sheet_name='Risk Scores', index=False)
-            # Add summary sheet
-            summary = pd.DataFrame({
-                "Metric": ["Total Companies", "High Risk Count", "Avg Risk Probability", "Industries"],
-                "Value": [
-                    len(df_scored),
-                    len(df_scored[df_scored["predicted_proba"] > 0.5]),
-                    df_scored["predicted_proba"].mean(),
-                    df_scored["industry"].nunique()
-                ]
-            })
-            summary.to_excel(writer, sheet_name='Summary', index=False)
-        
-        st.download_button(
-            label="📊 Download Excel Report",
-            data=output.getvalue(),
-            file_name="erip_risk_report.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-    
-    with col2:
-        # CSV export
-        csv = df_scored.to_csv(index=False)
-        st.download_button(
-            label="📄 Download CSV",
-            data=csv,
-            file_name="erip_risk_scores.csv",
-            mime="text/csv"
-        )
-
-
-def main():
-    df, cfg = load_dataset()
-    trained = train()
-    df_feat, pipeline = get_predictions(trained, df)
-    
-    # Load weights properly from config
-    try:
-        weights = config.load_weights()
-        # Convert weights format if needed
-        if "financial_weight" in weights:
-            cfg["weights"] = {
-                "financial": weights["financial_weight"],
-                "operational": weights["operational_weight"], 
-                "compliance": weights["compliance_weight"]
-            }
-        else:
-            cfg["weights"] = weights
-    except Exception as e:
-        st.warning(f"Could not load weights config: {e}")
-        cfg["weights"] = {
-            "financial": 0.45,
-            "operational": 0.35,
-            "compliance": 0.20
-        }
-    
-    df_scored = aggregate_scores(df_feat, cfg["weights"])
-    
-    # Dynamic header with actual data
-    layout_header(df_scored)
-    
-    # Navigation
-    view = st.sidebar.selectbox(
-        "📋 Select View",
-        [
-            "Portfolio Overview",
-            "Peer Benchmarking", 
-            "Explainability (SHAP)",
-            "Scenario & Stress Testing",
-            "Risk Recommendations",
-            "Market Risk & VaR",
-            "P&L Attribution",
-            "SQL Queries & Export"
-        ]
-    )
-    
-    if view == "Portfolio Overview":
-        portfolio_view(df_scored)
-    elif view == "Peer Benchmarking":
-        peer_benchmarking_section(df_scored)
-    elif view == "Explainability (SHAP)":
-        shap_section(df_feat, pipeline, trained)
-    elif view == "Scenario & Stress Testing":
-        scenario_section(df_feat, pipeline, trained)
-    elif view == "Risk Recommendations":
-        recommendations_section(df_scored)
-    elif view == "Market Risk & VaR":
-        market_risk_section(df_scored)
-    elif view == "P&L Attribution":
-        pnl_section(df_scored)
-    elif view == "SQL Queries & Export":
-        sql_section(df_scored)
 
 
 if __name__ == "__main__":
-    main()
+    layout_header()
+    
+    df_raw, cfg = load_dataset()
+    trained = train()
+    df_feat = engineer_features(df_raw)
+    df_scored, pipeline = get_predictions(trained, df_feat)
+    df_scored = aggregate_scores(df_scored, config.load_weights())
+    df_scored = add_risk_ratings(df_scored)
+    
+    # Sidebar navigation
+    st.sidebar.title("Navigation")
+    page = st.sidebar.radio(
+        "Select View",
+        ["Portfolio Overview", "Market Risk", "SQL Queries", "Peer Benchmarking", "Explainability", "Stress Testing", "Recommendations", "Export"]
+    )
+    
+    if page == "Portfolio Overview":
+        portfolio_view(df_scored)
+    elif page == "Market Risk":
+        market_risk_dashboard(df_scored)
+    elif page == "SQL Queries":
+        sql_queries_section()
+    elif page == "Peer Benchmarking":
+        peer_benchmarking_section(df_scored)
+    elif page == "Explainability":
+        shap_section(df_feat, pipeline, trained)
+    elif page == "Stress Testing":
+        scenario_section(df_raw, pipeline, trained)
+    elif page == "Recommendations":
+        recommendations_section(df_scored)
+    elif page == "Export":
+        export_section(df_scored)

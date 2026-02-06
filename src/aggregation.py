@@ -9,9 +9,9 @@ def aggregate_scores(df: pd.DataFrame, weights: Dict) -> pd.DataFrame:
     df["compliance_score"] = df["compliance_intensity"].rank(pct=True)
 
     df["aggregated_risk"] = (
-        df["financial_score"] * weights["financial_weight"]
-        + df["operational_score"] * weights["operational_weight"]
-        + df["compliance_score"] * weights["compliance_weight"]
+        df["financial_score"] * weights["financial"]
+        + df["operational_score"] * weights["operational"]
+        + df["compliance_score"] * weights["compliance"]
     )
     return df
 
