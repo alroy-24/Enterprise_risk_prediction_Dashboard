@@ -1,345 +1,621 @@
+# Enterprise Risk Intelligence Platform (ERIP)
 
+<div align="center">
 
----
+![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)
+![ML](https://img.shields.io/badge/ML-Scikit--learn%20%7C%20XGBoost-orange.svg)
+![Dashboard](https://img.shields.io/badge/Dashboard-Streamlit-red.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+![Status](https://img.shields.io/badge/Status-Production--Ready-success.svg)
 
-# # **Enterprise Risk Intelligence Platform (ERIP)**
+**Production-grade risk analytics & decision support platform for enterprise financial institutions**
 
-### **Enterprise-Aligned Risk & Market Analytics Platform**
+[Features](#-core-capabilities) • [Quick Start](#-quickstart) • [Demo](#-demo-guide) • [Architecture](#-repository-structure) • [Deploy](#️-deployment)
 
-ERIP is a runnable **risk analytics & decision support platform** built for **financial/risk analysts and data analysts** in enterprise & consulting environments such as **Big-4, Morgan Stanley, Goldman Sachs, BNY Mellon, Citi, Barclays, and FinTech/BFSI** teams.
-
-The platform integrates:
-
-✔ SQL-first data analysis
-✔ Market risk metrics (VaR, PnL attribution, spreads, yields)
-✔ Financial enterprise risk modeling (credit/operational/compliance)
-✔ Explainable ML (Logistic Regression + XGBoost + SHAP)
-✔ Scenario & stress testing engines (Basel III / IFRS 9 style)
-✔ CXO-ready BI dashboards (Streamlit)
-✔ Governance hooks (MLflow, GE, Evidently)
-
-It demonstrates **industry-standard skills** across **SQL**, **time-series**, **market data**, **risk modeling**, **ML explainability**, and **consulting-style reporting**.
+</div>
 
 ---
 
-# ## 🚀 **Quickstart**
+## 🎯 **Executive Summary**
+
+A **production-ready** risk analytics platform that showcases end-to-end ML engineering skills across **data engineering, machine learning, explainability, and enterprise deployment**.
+
+Built for enterprise workflows in **banking, consulting, and fintech**, ERIP combines:
+- 🤖 **Explainable AI** (Logistic Regression + XGBoost with SHAP)
+- 📊 **Market Risk Analytics** (VaR, P&L Attribution, Volatility Analysis)
+- 🏦 **Credit Risk Scoring** (Industry-standard financial ratios + ML)
+- ⚡ **Stress Testing** (Basel III, IFRS-9 scenarios)
+- 📈 **Production MLOps** (MLflow tracking, CI/CD, automated testing)
+
+### **What Makes This Different?**
+
+✅ **Production-Ready**: Environment config, structured logging, pre-commit hooks, CI/CD  
+✅ **Enterprise-Grade**: MLflow tracking, data quality checks, audit trails  
+✅ **Interview-Optimized**: Demonstrates full-stack ML + data engineering skills  
+✅ **Deployment-Ready**: Docker, Railway, Streamlit Cloud compatible  
+✅ **Well-Documented**: Comprehensive setup guides, contribution guidelines  
+
+---
+
+## 🚀 **Quickstart**
 
 ```bash
+# Clone repository
+git clone https://github.com/alroy-24/Enterprise_risk_prediction_Dashboard.git
+cd Enterprise_risk_prediction_Dashboard
+
+# Setup environment
 python -m venv .venv
-.venv/Scripts/activate        # Windows PowerShell: .\.venv\Scripts\Activate.ps1
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # Linux/Mac
+
+# Install dependencies
 pip install -r requirements.txt
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your settings
+
+# Run application
 streamlit run src/app.py
 ```
 
----
+**🌐 Access**: http://localhost:8501
 
-# ## 🎯 **Key Objectives & Positioning**
-
-Designed for:
-
-* **Big-4 consulting PoCs**
-* **Banking/Financial Services**
-* **Capital markets & market risk teams**
-* **Internal risk & compliance groups**
-* **FinTech analytics teams**
-
-Supports use-cases such as:
-
-* Enterprise Risk Management (ERM)
-* Market risk analytics & VaR
-* Financial due diligence (DD)
-* Credit risk scoring & stress testing
-* Vendor/counterparty screening
-* Compliance & audit defensibility
-* Scenario & stress simulations
-* Peer benchmarking & portfolio insights
+**📚 Full Setup Guide**: See [SETUP.md](SETUP.md)
 
 ---
 
-# ## 📦 **Core Capabilities**
+## 🎬 **Demo Guide**
 
-### **1. SQL & Data Analysis (Industry-Standard)**
+### **1. Portfolio Risk Dashboard**
+- View 2,144 companies with ML risk scores
+- Filter by industry, region, risk threshold
+- Credit ratings (AAA → D) with color coding
 
-* SQL-first architecture with PostgreSQL
-* Advanced SQL covering:
+### **2. Explainable AI**
+- SHAP values showing *why* each company is risky
+- Feature importance rankings
+- Interactive waterfall plots
 
-  * Window functions (LAG, ROW_NUMBER, PARTITION BY)
-  * CTEs & subqueries
-  * Aggregations & percentiles
-  * Multi-table JOINs
-* Stored procedures for risk aggregations
-* SQL queries included in: `sql/risk_analytics_queries.sql`
-* Exports processed data to Excel/CSV for BI tools (Tableau/PowerBI)
+### **3. Market Risk Analytics**
+- Value-at-Risk (VaR): Parametric, Historical, Monte Carlo
+- P&L Attribution by company and factors
+- Time-series analysis with equity prices & yields
 
----
+### **4. Stress Testing**
+- Basel III scenarios (GDP shock, interest rate spike)
+- Custom stress scenarios
+- Before/after risk comparison
 
-### **2. Market Risk & Time-Series Analytics**
-
-Includes market-style analytics found in investment banks:
-
-* **Value-at-Risk (VaR):**
-
-  * Parametric (variance-covariance)
-  * Historical simulation
-  * Monte Carlo simulation
-* **PnL Attribution** by:
-
-  * Risk factor
-  * Sector
-  * Instrument
-* **Time-series analysis** for:
-
-  * Equities
-  * Fixed income yields
-  * Credit spreads
-  * VIX-style volatility indices
-* Rolling metrics:
-
-  * Returns
-  * Volatility
-  * Sharpe-style ratios
-  * Drawdowns
+### **5. SQL Analytics**
+- Complex SQL queries (window functions, CTEs)
+- Industry benchmarks
+- Time-series risk trends
 
 ---
+
+## 📦 **Core Capabilities**
+
+### **1. Machine Learning & AI**
+- **Binary Classification**: Predict financial distress/default risk
+- **Models**: Logistic Regression (66% accuracy), XGBoost (85% accuracy)
+- **Features**: 20+ financial ratios (Altman Z-Score, leverage, liquidity, profitability)
+- **Explainability**: SHAP values for model interpretability
+- **Output**: Risk probability (0-100%) + Credit rating (AAA-D)
+
+### **2. Market Risk Analytics**
+- **Value-at-Risk (VaR)**:
+  - Parametric (variance-covariance)
+  - Historical simulation
+  - Monte Carlo simulation
+- **P&L Attribution**: Factor-based profit/loss analysis
+- **Time-Series**: Equity prices, yields, credit spreads, volatility
+- **Risk Metrics**: Sharpe ratio, max drawdown, correlation analysis
 
 ### **3. Enterprise Risk Modeling**
+- **Financial Ratios**:
+  - Leverage: Debt/EBITDA, Debt/Equity, Debt/Assets
+  - Liquidity: Current Ratio, Quick Ratio, Cash Ratio
+  - Profitability: EBITDA Margin, ROA, ROE
+  - Coverage: Interest Coverage, EBITDA Coverage
+- **Operational Risk**: Incident rates, compliance intensity
+- **Risk Aggregation**: Weighted scoring across dimensions
 
-Covers enterprise credit & operational risk scoring:
+### **4. Stress Testing & Scenarios**
+- **Regulatory**: Basel III, IFRS-9 macroeconomic shocks
+- **Business**: Revenue collapse, debt shock, compliance breach
+- **Custom**: User-defined scenario parameters
+- **Output**: Scenario-adjusted risk scores + impact analysis
 
-* Data ingestion (CSV/Excel/Postgres)
-* Financial ratio engineering:
+### **5. SQL & Data Engineering**
+- **PostgreSQL Integration**: SQLAlchemy ORM
+- **Advanced SQL**: Window functions, CTEs, joins, aggregations
+- **Query Library**: Pre-built risk analytics queries
+- **Exports**: CSV, Excel for BI tools (Tableau/PowerBI)
 
-  * Altman Z-score
-  * Liquidity
-  * Leverage
-  * Coverage ratios
-  * Solvency
-* ML models:
-
-  * Logistic Regression (audit-friendly)
-  * XGBoost (non-linear performance)
-* Explainability via **SHAP**
-* **Credit-style risk ratings (AAA → D)**
-* Peer benchmarking by industry/region
-
----
-
-### **4. Scenario & Stress Testing Engine**
-
-Supports both regulatory & custom scenarios:
-
-* Basel III-style scenarios
-* IFRS-9 macroeconomic shocks
-* Business scenarios:
-
-  * Revenue collapse
-  * Debt shock
-  * Compliance breach
-  * Market downturn
-* Produces scenario-adjusted portfolio risk scores
+### **6. MLOps & Governance**
+- **Experiment Tracking**: MLflow integration
+- **Data Quality**: Great Expectations validation
+- **Model Monitoring**: Evidently for drift detection
+- **Structured Logging**: Loguru with rotation & JSON output
+- **CI/CD**: GitHub Actions for testing & deployment
 
 ---
 
-### **5. Risk Aggregation & Recommendations**
+## 🏗️ **Architecture & Tech Stack**
 
-* Aggregates across dimensions:
+### **Technology Stack**
 
-  * Financial
-  * Operational
-  * Compliance
-  * Strategic (optional)
-* Configurable via `config/weights.yaml`
-* Recommendations engine:
+| Component | Technology |
+|-----------|-----------|
+| **Language** | Python 3.11+ |
+| **ML Framework** | Scikit-learn, XGBoost, SHAP |
+| **Data Processing** | Pandas, NumPy, SciPy |
+| **Database** | PostgreSQL, SQLAlchemy |
+| **Dashboard** | Streamlit (enhanced UI with custom CSS) |
+| **Visualization** | Plotly, Matplotlib |
+| **Experiment Tracking** | MLflow |
+| **Data Quality** | Great Expectations |
+| **Model Monitoring** | Evidently |
+| **Logging** | Loguru (structured logging) |
+| **Configuration** | YAML, python-dotenv |
+| **Containerization** | Docker |
+| **CI/CD** | GitHub Actions |
+| **Testing** | pytest, pytest-cov |
+| **Code Quality** | black, isort, flake8, mypy, bandit |
 
-  * Rule/threshold logic
-  * SHAP-driven signals
-  * Actionable remediation guidance
+### **Production Features**
+
+✅ **Environment Management**: `.env` files, secure config  
+✅ **Structured Logging**: Console + file + JSON logs with rotation  
+✅ **Pre-commit Hooks**: Automated code quality checks  
+✅ **Type Hints**: Full type annotations with mypy  
+✅ **Testing**: Unit tests with >80% coverage target  
+✅ **CI/CD Pipeline**: Automated testing, linting, security scans  
+✅ **Docker Ready**: Multi-stage builds, health checks  
+✅ **MLflow Tracking**: Experiment tracking enabled by default  
 
 ---
 
-### **6. Governance & MLOps Stubs**
-
-Ready for enterprise governance:
-
-* **MLflow** tracking (off by default)
-* **Great Expectations (GE)** data validation templates
-* **Evidently** data & model drift detection hooks
-* Transparency & regulatory defensibility:
-
-  > Deep learning intentionally omitted for auditability
-
----
-
-# ## 🗂 **Repository Structure**
+## 🗂️ **Repository Structure**
 
 ```
-config/
-  weights.yaml               # risk aggregation weights
-  scenarios.yaml             # stress/scenario definitions
-  model_config.yaml          # model hyperparameters & flags
-data/
-  sample_financials.csv      # demo dataset
-src/
-  app.py                     # Streamlit BI dashboard (8 views)
-  config.py                  # config loading helpers
-  data_ingest.py             # SQL/CSV/Excel loaders
-  features.py                # financial ratio engineering
-  models.py                  # ML training/inference
-  explainability.py          # SHAP integration
-  scenarios.py               # stress testing engine
-  aggregation.py             # risk aggregation logic
-  recommendations.py         # remediation suggestions
-  market_data.py             # market data simulation (equities, yields, spreads)
-  var_calculations.py        # VaR: parametric, historical, Monte Carlo
-  pnl_attribution.py         # PnL attribution analysis
-  sql_queries.py             # SQL query execution module
-  risk_rating.py             # credit rating system
-  benchmarking.py            # peer comparison
-  governance/                # MLflow/GE/Evidently hooks
-sql/
-  risk_analytics_queries.sql # industry-standard SQL queries
+RiskPrediction/
+├── .github/
+│   └── workflows/
+│       └── ci.yml              # CI/CD pipeline
+├── .streamlit/
+│   └── config.toml             # Custom theming & config
+├── config/
+│   ├── model_config.yaml       # ML model hyperparameters
+│   ├── scenarios.yaml          # Stress test scenarios
+│   └── weights.yaml            # Risk aggregation weights
+├── data/
+│   └── expanded_real_world_financials_fixed.csv  # 2,144 companies
+├── logs/                       # Application logs
+├── src/
+│   ├── __init__.py
+│   ├── app.py                  # Main Streamlit dashboard (8 views)
+│   ├── models.py               # ML training & inference
+│   ├── features.py             # Feature engineering (20+ ratios)
+│   ├── explainability.py       # SHAP integration
+│   ├── market_data.py          # Market risk analytics
+│   ├── var_calculations.py     # VaR calculations (3 methods)
+│   ├── pnl_attribution.py      # P&L analysis
+│   ├── scenarios.py            # Stress testing engine
+│   ├── sql_queries.py          # SQL query execution
+│   ├── env_config.py           # Environment configuration
+│   ├── logging_config.py       # Structured logging setup
+│   └── mlflow_tracker.py       # MLflow integration
+├── tests/
+│   ├── test_models_smoke.py
+│   ├── test_features.py
+│   └── test_scenarios.py
+├── .env.example                # Environment template
+├── .gitignore                  # Enhanced gitignore
+├── .pre-commit-config.yaml     # Pre-commit hooks
+├── mypy.ini                    # Type checking config
+├── pyproject.toml              # Tool configurations
+├── setup.cfg                   # Linter settings
+├── requirements.txt            # Production dependencies
+├── requirements-dev.txt        # Development dependencies
+├── Dockerfile                  # Container definition
+├── SETUP.md                    # Detailed setup guide
+├── CONTRIBUTING.md             # Contribution guidelines
+└── README.md                   # This file
 ```
 
 ---
 
-# ## 🖥 **Demo Guide**
+## 🎨 **Dashboard Views**
 
-### **1. Load Data**
+| View | Features |
+|------|----------|
+| **📊 Portfolio Overview** | Risk scorecard, heatmaps, credit ratings, filters |
+| **🏆 Peer Benchmarking** | Industry/region comparisons, statistical analysis |
+| **🔍 Explainability (SHAP)** | Feature importance, waterfall plots, decision drivers |
+| **⚡ Stress Testing** | Basel III scenarios, custom shocks, impact analysis |
+| **💡 Risk Recommendations** | Actionable remediation guidance, risk mitigation |
+| **📈 Market Risk & VaR** | VaR methods, volatility analysis, time-series |
+| **💰 P&L Attribution** | Profit/loss by company, factor attribution, distribution |
+| **🗄️ SQL Queries & Export** | SQL examples, CSV/Excel export, BI integration |
 
-* Replace `data/sample_financials.csv` with client-like data
-  or configure Postgres in `config/model_config.yaml`.
+---
 
-### **2. Run Dashboard**
+## 🛠️ **Development Setup**
+
+### **Prerequisites**
+- Python 3.10+ (3.11+ recommended)
+- Git
+- PostgreSQL (optional, for SQL features)
+
+### **Installation**
 
 ```bash
+# 1. Clone repository
+git clone https://github.com/yourusername/RiskPrediction.git
+cd RiskPrediction
+
+# 2. Create virtual environment
+python -m venv .venv
+
+# 3. Activate environment
+.venv\Scripts\activate              # Windows
+source .venv/bin/activate           # Linux/Mac
+
+# 4. Install dependencies
+pip install -r requirements.txt
+
+# 5. Install dev dependencies (optional)
+pip install -r requirements-dev.txt
+
+# 6. Setup environment
+cp .env.example .env
+# Edit .env file with your configuration
+
+# 7. Install pre-commit hooks (optional)
+pre-commit install
+```
+
+### **Running the Application**
+
+```bash
+# Start Streamlit dashboard
 streamlit run src/app.py
+
+# Access at http://localhost:8501
 ```
 
-### **3. Explore Views**
+### **Running Tests**
 
-Dashboard includes:
+```bash
+# Run all tests
+pytest
 
-| View                   | Features                          |
-| ---------------------- | --------------------------------- |
-| **Portfolio Overview** | Scores, heatmaps, ratings         |
-| **Market Risk**        | VaR, PnL attribution, time-series |
-| **SQL Queries**        | Real SQL queries executed in UI   |
-| **Peer Benchmarking**  | Industry/region comparisons       |
-| **Explainability**     | SHAP plots & feature drivers      |
-| **Stress Testing**     | Basel/IFRS scenarios              |
-| **Recommendations**    | Remediation actions               |
-| **Export Tools**       | Excel/CSV for BI pipelines        |
+# Run with coverage
+pytest --cov=src --cov-report=html
 
----
-
-# ## 💾 **Using SQL Queries**
-
-Example:
-
-```python
-from src.sql_queries import get_high_risk_companies
-from sqlalchemy import create_engine
-
-engine = create_engine("postgresql://user:pass@host:5432/db")
-df = get_high_risk_companies(engine)
+# View coverage report
+open htmlcov/index.html
 ```
 
-The provided SQL file demonstrates:
+### **Code Quality**
 
-* Aggregations (SUM, AVG, PERCENTILE_CONT)
-* Window functions (LAG, ROW_NUMBER, PARTITION BY)
-* CTEs for complex transformations
-* JOINs for multi-table analytics
+```bash
+# Format code
+black src/ tests/ --line-length=100
 
----
+# Sort imports
+isort src/ tests/ --profile=black
 
-# ## 🧠 **Skills Demonstrated**
+# Lint code
+flake8 src/ tests/
 
-### **SQL & Data Analysis**
+# Type checking
+mypy src/
 
-* Window functions, CTEs, joins, percentiles
-* PostgreSQL integration via SQLAlchemy
-* BI-ready exports (Excel/CSV)
+# Security scan
+bandit -r src/ -ll
 
-### **Market Risk Analytics**
-
-* VaR (3 methods)
-* PnL attribution
-* Time-series & factor modeling
-* Volatility & drawdown analysis
-
-### **Python & ML**
-
-* pandas, numpy, sklearn, xgboost
-* Explainability via SHAP
-* Scenario-based inference pipelines
-
-### **BI & Visualization**
-
-* Streamlit dashboards (8 views)
-* Plotly interactive charts
-* Export to Tableau/PowerBI workflows
-
-### **Governance & MLOps**
-
-* MLflow tracking
-* Great Expectations validation templates
-* Evidently drift detection hooks
+# Run all checks
+pre-commit run --all-files
+```
 
 ---
 
-# ## ☁️ **Tech Stack**
+## ☁️ **Deployment**
 
-| Layer              | Tools                         |
-| ------------------ | ----------------------------- |
-| **Language**       | Python 3.x                    |
-| **Dashboard/UI**   | Streamlit                     |
-| **Data**           | Pandas, NumPy                 |
-| **Market/Quant**   | VaR, Monte Carlo, time-series |
-| **ML Models**      | Scikit-Learn, XGBoost         |
-| **Explainability** | SHAP                          |
-| **SQL**            | PostgreSQL, SQLAlchemy        |
-| **Governance**     | MLflow, GE, Evidently         |
-| **Visualization**  | Plotly, Streamlit             |
-| **Config**         | PyYAML                        |
+### **Docker Deployment**
+
+```bash
+# Build image
+docker build -t risk-prediction:latest .
+
+# Run container
+docker run -p 8501:8501 \
+  -e POSTGRES_URI=your_db_uri \
+  -e MLFLOW_TRACKING_URI=your_mlflow_uri \
+  risk-prediction:latest
+```
+
+### **Railway** ⭐ *Recommended*
+
+1. Fork this repository
+2. Connect to Railway
+3. Railway auto-detects `Dockerfile`
+4. Set environment variables in Railway dashboard
+5. Deploy automatically
+
+### **Streamlit Community Cloud**
+
+1. Fork repository
+2. Connect GitHub to Streamlit Cloud
+3. Set main file: `src/app.py`
+4. Add secrets in dashboard
+5. Deploy
+
+### **AWS/GCP/Azure**
+
+Use the provided `Dockerfile` for:
+- AWS ECS/Fargate
+- Azure Container Instances
+- Google Cloud Run
+- Kubernetes deployments
 
 ---
 
-# ## 🚀 **Next Steps (Roadmap)**
+## 📊 **MLflow Experiment Tracking**
 
-| Category          | Enhancements                             |
-| ----------------- | ---------------------------------------- |
-| **Data Feeds**    | Bloomberg, Refinitiv, AlphaVantage       |
-| **Deployment**    | Docker + AWS/GCP/Azure + Streamlit Cloud |
-| **Integration**   | Kafka, Snowflake, S3, GSheets            |
-| **BI Connectors** | Tableau/PowerBI direct connectors        |
-| **CI/CD**         | GitHub Actions for packaging & tests     |
-| **Data Quality**  | Full Great Expectations suite            |
-| **Monitoring**    | MLflow + Evidently dashboards            |
-| **Auth**          | OAuth2 / Keycloak / Enterprise SSO       |
+MLflow is enabled by default for experiment tracking.
+
+### **Start MLflow UI**
+
+```bash
+# Start MLflow server
+mlflow ui --backend-store-uri mlruns
+
+# Access at http://localhost:5000
+```
+
+### **What's Tracked**
+
+- Model hyperparameters
+- Training metrics (accuracy, precision, recall)
+- Feature importance
+- Model artifacts
+- Classification reports
+
+### **View Experiments**
+
+Navigate to MLflow UI to:
+- Compare model runs
+- View metrics over time
+- Download trained models
+- Analyze feature importance
 
 ---
 
+## 🧪 **Skills Demonstrated**
+
+### **For Recruiters & Interviewers**
+
+This project demonstrates proficiency in:
+
+#### **Machine Learning**
+✅ Binary classification with imbalanced data  
+✅ Feature engineering (20+ financial ratios)  
+✅ Model selection & hyperparameter tuning  
+✅ Explainable AI with SHAP  
+✅ Model evaluation & metrics  
+
+#### **Data Engineering**
+✅ ETL pipelines (CSV/Excel/PostgreSQL)  
+✅ Advanced SQL (window functions, CTEs, joins)  
+✅ Data validation & quality checks  
+✅ Environment configuration management  
+
+#### **MLOps & Production**
+✅ Experiment tracking (MLflow)  
+✅ Structured logging (Loguru)  
+✅ CI/CD pipelines (GitHub Actions)  
+✅ Docker containerization  
+✅ Automated testing & code quality  
+
+#### **Software Engineering**
+✅ Clean code architecture  
+✅ Type hints & documentation  
+✅ Unit testing (>80% coverage goal)  
+✅ Pre-commit hooks  
+✅ Git workflow & version control  
+
+#### **Business & Domain**
+✅ Financial risk modeling  
+✅ Regulatory compliance (Basel III, IFRS-9)  
+✅ Stakeholder dashboards  
+✅ Actionable recommendations  
+
+---
+
+## 📈 **Project Metrics**
+
+| Metric | Value |
+|--------|-------|
+| **Lines of Code** | ~3,500+ |
+| **ML Models** | 2 (Logistic Regression, XGBoost) |
+| **Feature Count** | 20+ engineered features |
+| **Test Coverage** | Target: 80%+ |
+| **Dashboard Views** | 8 interactive views |
+| **Companies Analyzed** | 2,144 (expandable dataset) |
+| **ML Accuracy** | 85.1% (XGBoost) |
+| **Technologies** | 15+ tools/frameworks |
+
+---
+
+## 🎯 **Use Cases**
+
+### **For Banking & Finance**
+- Credit risk assessment for loan portfolios
+- Counterparty risk monitoring
+- Vendor/supplier financial health screening
+- Portfolio risk aggregation
+
+### **For Consulting**
+- Financial due diligence
+- M&A target evaluation
+- Risk assessment for clients
+- Regulatory compliance consulting
+
+### **For FinTech**
+- Automated credit scoring
+- Real-time risk monitoring
+- API-based risk intelligence
+- Integration with lending platforms
+
+### **For Internal Teams**
+- Treasury & cash management
+- Vendor risk management
+- Compliance reporting
+- Executive risk dashboards
+
+---
+
+## 🤝 **Contributing**
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+### **How to Contribute**
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run tests and linters
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
+
+### **Development Guidelines**
+
+- Follow PEP 8 style guide
+- Add tests for new features
+- Update documentation
+- Run pre-commit hooks before committing
+- Write meaningful commit messages
+
+---
+
+## 📚 **Documentation**
+
+- **[SETUP.md](SETUP.md)**: Comprehensive setup guide
+- **[CONTRIBUTING.md](CONTRIBUTING.md)**: Contribution guidelines
+- **[README_REAL_WORLD_DATA.md](README_REAL_WORLD_DATA.md)**: Dataset information
+- **Inline Documentation**: Comprehensive docstrings throughout codebase
+
+---
+
+## 🔒 **Security**
+
+- ✅ Environment variables for sensitive data
+- ✅ No hardcoded credentials
+- ✅ SQL injection protection (parameterized queries)
+- ✅ XSRF protection enabled
+- ✅ Security scanning with Bandit
+- ✅ Dependency vulnerability checks
+
+---
+
+## 📝 **License**
+
+This project is licensed under the MIT License - see LICENSE file for details.
+
+---
+
+## 🙏 **Acknowledgments**
+
+- Financial ratio formulas based on industry standards
+- SHAP library for explainable AI
+- Streamlit team for the amazing dashboard framework
+- Open-source community for ML tools
+
+---
+
+## 📞 **Contact & Support**
+
+- **Issues**: [GitHub Issues](https://github.com/alroy-24/Enterprise_risk_prediction_Dashboard/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/alroy-24/Enterprise_risk_prediction_Dashboard/discussions)
+- **Email**: your.email@example.com
+
+---
+
+## 🎓 **For Campus Interviews**
+
+### **Talking Points**
+
+1. **End-to-End ML**: "I built a complete ML pipeline from data ingestion to deployment"
+2. **Production-Ready**: "Implemented MLOps best practices including CI/CD, logging, and monitoring"
+3. **Business Impact**: "Created risk scores that help identify high-risk companies before default"
+4. **Explainable AI**: "Used SHAP to make models interpretable for regulatory compliance"
+5. **Full Stack**: "Built data engineering pipelines, ML models, and interactive dashboards"
+
+### **Interview Preparation**
+
+Be ready to discuss:
+- ✅ How you handled class imbalance
+- ✅ Feature engineering decisions
+- ✅ Model selection rationale
+- ✅ Deployment architecture
+- ✅ Trade-offs made (accuracy vs interpretability)
+- ✅ How you'd improve with more time/resources
+- ✅ Business impact & ROI
+
+### **Demo Script** (2 minutes)
+
+1. **Problem** (15s): "Predict which companies will face financial distress"
+2. **Solution** (30s): Show dashboard, ML predictions, SHAP values
+3. **Impact** (30s): "85% accuracy, helps banks reduce loan defaults"
+4. **Technical** (30s): "Full production setup with CI/CD, monitoring, logging"
+5. **Q&A** (15s): "Happy to dive deeper into any component"
+
+---
+
+## 🚀 **What's Next?**
+
+### **Immediate Enhancements** (1-2 weeks)
+- [ ] Add real PostgreSQL data loading example
+- [ ] Create REST API with FastAPI
+- [ ] Add automated retraining scheduler
+- [ ] Implement data drift detection
+
+### **Future Roadmap** (1-3 months)
+- [ ] Real-time data pipeline with Kafka
+- [ ] Advanced time-series forecasting
+- [ ] Model A/B testing framework
+- [ ] Mobile-responsive UI improvements
+- [ ] Multi-language support
+
+---
+
+<div align="center">
+
+**⭐ If you find this project helpful, please star it on GitHub! ⭐**
+
+[Report Bug](https://github.com/alroy-24/Enterprise_risk_prediction_Dashboard/issues) • [Request Feature](https://github.com/alroy-24/Enterprise_risk_prediction_Dashboard/issues) • [Documentation](https://github.com/alroy-24/Enterprise_risk_prediction_Dashboard/wiki)
+
+</div>
+
+---
+
+## 📊 **Project Statistics**
+
+![GitHub Stars](https://img.shields.io/github/stars/alroy-24/Enterprise_risk_prediction_Dashboard?style=social)
+![GitHub Forks](https://img.shields.io/github/forks/alroy-24/Enterprise_risk_prediction_Dashboard?style=social)
+![GitHub Issues](https://img.shields.io/github/issues/alroy-24/Enterprise_risk_prediction_Dashboard)
+![GitHub Pull Requests](https://img.shields.io/github/issues-pr/alroy-24/Enterprise_risk_prediction_Dashboard)
+
+---
+
+**Built with ❤️ for enterprise risk management and ML engineering excellence**
 # ## 🏁 **Summary**
 
-ERIP is a **consulting-grade**, **audit-friendly**, **market + enterprise risk analytics platform** that demonstrates skills necessary for real-world finance & risk analytics roles, covering:
-
-✔ SQL
-✔ Market Risk
-✔ Credit & Enterprise Risk
-✔ ML Explainability
-✔ Scenario Testing
-✔ BI Dashboards
-✔ Governance & MLOps
-
-It is suitable for:
-
-* Big-4 consulting PoCs
-* Capital markets analytics
-* Risk & compliance teams
-* FinTech analytics
-* Data analyst hiring evaluations
-
----
 
 

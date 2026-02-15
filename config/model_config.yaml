@@ -10,7 +10,7 @@ data:
 model:
   test_size: 0.2
   random_state: 42
-  use_mlflow: false
+  use_mlflow: true
   enable_shap: true
   # Switch to true only if xgboost is installed; fallback to Logistic otherwise.
   train_xgboost: true
@@ -26,8 +26,9 @@ model:
     colsample_bytree: 0.8
 
 governance:
-  # Set to a tracking URI to persist runs
-  mlflow_tracking_uri: ""
+  # Set to a tracking URI to persist runs (e.g., http://localhost:5000 or mlruns/)
+  mlflow_tracking_uri: "mlruns"
+  mlflow_experiment_name: "risk_prediction"
   # Great Expectations expectations suite path (optional)
   expectations_path: ""
   # Evidently monitoring configuration placeholder

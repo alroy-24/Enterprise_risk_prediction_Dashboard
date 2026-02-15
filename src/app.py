@@ -33,39 +33,163 @@ from improve_charts import (
 )
 
 
-st.set_page_config(page_title="Enterprise Risk Intelligence Platform", layout="wide")
+st.set_page_config(
+    page_title="Enterprise Risk Intelligence Platform",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://github.com/yourusername/RiskPrediction',
+        'Report a bug': None,
+        'About': "# Enterprise Risk Intelligence Platform\nAI-powered risk analytics for financial institutions."
+    }
+)
+
+# Custom CSS for enhanced styling
+st.markdown("""
+<style>
+    /* Main header styling */
+    .main-header {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Metric cards enhancement */
+    [data-testid="stMetricValue"] {
+        font-size: 2rem;
+        font-weight: 600;
+    }
+    
+    /* Sidebar styling */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1e1e2e 0%, #262730 100%);
+    }
+    
+    /* Card-like containers */
+    .stAlert {
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+    }
+    
+    /* Button styling */
+    .stButton>button {
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        transition: all 0.3s ease;
+    }
+    
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Dataframe styling */
+    .dataframe {
+        border-radius: 8px;
+    }
+    
+    /* Success/Warning/Error messages */
+    .element-container .stSuccess {
+        background-color: rgba(0, 255, 0, 0.1);
+        border-left: 4px solid #00ff00;
+    }
+    
+    .element-container .stWarning {
+        background-color: rgba(255, 165, 0, 0.1);
+        border-left: 4px solid #ffa500;
+    }
+    
+    .element-container .stError {
+        background-color: rgba(255, 0, 0, 0.1);
+        border-left: 4px solid #ff0000;
+    }
+    
+    /* Tabs styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 8px 8px 0 0;
+        padding: 10px 20px;
+        font-weight: 600;
+    }
+    
+    /* Risk badge styling */
+    .risk-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+    
+    .risk-high {
+        background-color: #ff4444;
+        color: white;
+    }
+    
+    .risk-medium {
+        background-color: #ffaa00;
+        color: white;
+    }
+    
+    .risk-low {
+        background-color: #00cc66;
+        color: white;
+    }
+    
+    /* Hide Streamlit branding */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    
+    /* Improve spacing */
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 
 @st.cache_data
 def load_dataset():
     # Try fixed expanded dataset first, fallback to expanded, then original
-    try:
-        df = pd.read_csv("data/expanded_real_world_financials_fixed.csv")
-        st.info("📊 Using expanded real-world dataset with risk flags (2,144 records)")
-    except FileNotFoundError:
+    with st.spinner("🔄 Loading dataset..."):
         try:
-            df = pd.read_csv("data/expanded_real_world_financials.csv")
-            st.info("📊 Using expanded real-world dataset (2,144 records)")
+            df = pd.read_csv("data/expanded_real_world_financials_fixed.csv")
+            st.success("✅ Loaded expanded real-world dataset (2,144 records)", icon="✅")
         except FileNotFoundError:
             try:
-                df = pd.read_csv("data/real_world_financials.csv")
-                st.info("📊 Using real-world dataset (15 records)")
+                df = pd.read_csv("data/expanded_real_world_financials.csv")
+                st.info("📊 Loaded expanded real-world dataset (2,144 records)", icon="📊")
             except FileNotFoundError:
-                # Fallback to original config-based loading
-                cfg = config.load_model_config()
-                source = cfg["data"]["source"]
-                if source.startswith("data/"):
-                    path = Path(source)
-                    ds = DataSource(path=path)
-                elif source == "postgres":
-                    ds = DataSource(
-                        postgres_uri=cfg["data"]["postgres"]["uri"],
-                        table=cfg["data"]["postgres"]["table"],
-                    )
-                else:
-                    raise ValueError("Unsupported data source.")
-                df = load_data(ds)
-                st.info("📊 Using sample dataset from config")
+                try:
+                    df = pd.read_csv("data/real_world_financials.csv")
+                    st.info("📊 Loaded real-world dataset (15 records)", icon="📊")
+                except FileNotFoundError:
+                    # Fallback to original config-based loading
+                    cfg = config.load_model_config()
+                    source = cfg["data"]["source"]
+                    if source.startswith("data/"):
+                        path = Path(source)
+                        ds = DataSource(path=path)
+                    elif source == "postgres":
+                        ds = DataSource(
+                            postgres_uri=cfg["data"]["postgres"]["uri"],
+                            table=cfg["data"]["postgres"]["table"],
+                        )
+                    else:
+                        raise ValueError("Unsupported data source.")
+                    df = load_data(ds)
+                    st.info("📊 Loaded sample dataset from config", icon="📊")
     
     # Load config separately
     try:
@@ -90,8 +214,10 @@ def load_dataset():
 
 @st.cache_resource
 def train():
-    df, cfg = load_dataset()
-    trained = train_models(df, cfg)
+    with st.spinner("🤖 Training ML models..."):
+        df, cfg = load_dataset()
+        trained = train_models(df, cfg)
+        st.success("✅ ML models trained successfully!", icon="🎯")
     return trained
 
 
@@ -105,8 +231,29 @@ def get_predictions(trained, df_feat: pd.DataFrame):
 
 
 def layout_header(df_scored: pd.DataFrame):
-    st.title("🏢 Enterprise Risk Intelligence Platform (ERIP)")
-    st.caption("**Consulting-grade risk analytics** | Explainable AI | Regulatory stress testing | Peer benchmarking")
+    # Enhanced header with gradient styling
+    st.markdown('<h1 class="main-header">🏢 Enterprise Risk Intelligence Platform</h1>', unsafe_allow_html=True)
+    
+    # Subtitle with badges
+    st.markdown("""
+        <div style="margin-bottom: 2rem;">
+            <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                         color: white; padding: 6px 12px; border-radius: 20px; 
+                         font-size: 0.85rem; font-weight: 600; margin-right: 8px;">
+                🤖 Explainable AI
+            </span>
+            <span style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
+                         color: white; padding: 6px 12px; border-radius: 20px; 
+                         font-size: 0.85rem; font-weight: 600; margin-right: 8px;">
+                📊 Market Risk Analytics
+            </span>
+            <span style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
+                         color: white; padding: 6px 12px; border-radius: 20px; 
+                         font-size: 0.85rem; font-weight: 600;">
+                🏦 Enterprise-Grade
+            </span>
+        </div>
+    """, unsafe_allow_html=True)
     
     # Dynamic metrics based on actual data
     create_portfolio_summary_cards(df_scored)
@@ -141,6 +288,17 @@ def portfolio_view(df_scored: pd.DataFrame):
         df_filtered = df_filtered[df_filtered["region"] == selected_region]
     df_filtered = df_filtered[df_filtered["predicted_proba"] >= risk_threshold]
     
+    # Filter summary
+    st.markdown(f"""
+        <div style="padding: 0.75rem; background: rgba(102, 126, 234, 0.1); 
+                    border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #667eea;">
+            📋 <strong>Filtered Results:</strong> {len(df_filtered)} companies | 
+            Industry: <strong>{selected_industry}</strong> | 
+            Region: <strong>{selected_region}</strong> | 
+            Risk Threshold: <strong>{risk_threshold:.0%}</strong>
+        </div>
+    """, unsafe_allow_html=True)
+    
     # Display table with key metrics
     display_cols = [
         "company_id", "industry", "region", "risk_rating", 
@@ -152,10 +310,23 @@ def portfolio_view(df_scored: pd.DataFrame):
     st.dataframe(
         df_filtered[display_cols].sort_values("predicted_proba", ascending=False),
         use_container_width=True,
-        height=400
+        height=400,
+        column_config={
+            "predicted_proba": st.column_config.ProgressColumn(
+                "Risk Score",
+                format="%.1f%%",
+                min_value=0,
+                max_value=1,
+            ),
+            "risk_rating": st.column_config.TextColumn(
+                "Rating",
+                help="Credit-style risk rating"
+            )
+        }
     )
     
     # Improved Visualizations
+    st.markdown("---")
     st.subheader("📈 Risk Analytics Dashboard")
     
     # Row 1: Distribution and Industry Comparison
@@ -592,6 +763,108 @@ def market_risk_section(df_scored: pd.DataFrame):
         st.info("This feature requires market data. In production, this would connect to real market data feeds.")
 
 
+def pnl_section(df_scored: pd.DataFrame):
+    """
+    P&L Attribution Dashboard - Detailed profit and loss analysis.
+    """
+    st.subheader("💰 P&L Attribution Analysis")
+    st.caption("Comprehensive profit and loss attribution by company and factors")
+    
+    # Generate market data
+    try:
+        market_df = generate_market_data_cached()
+        
+        # Calculate returns
+        try:
+            market_df_returns = calculate_returns(market_df)
+        except Exception as e:
+            st.error(f"Error calculating returns: {e}")
+            return
+        
+        # PnL Attribution
+        st.subheader("📊 P&L by Company")
+        
+        if "equity_price" in market_df_returns.columns:
+            pnl_results = calculate_pnl(market_df_returns)
+            
+            if len(pnl_results) > 0:
+                # Summary metrics
+                col1, col2, col3, col4 = st.columns(4)
+                with col1:
+                    st.metric("Total P&L", f"${pnl_results['pnl'].sum():,.0f}")
+                with col2:
+                    st.metric("Average P&L", f"${pnl_results['pnl'].mean():,.0f}")
+                with col3:
+                    winners = (pnl_results['pnl'] > 0).sum()
+                    st.metric("Winning Positions", f"{winners}/{len(pnl_results)}")
+                with col4:
+                    win_rate = (pnl_results['pnl'] > 0).mean() * 100
+                    st.metric("Win Rate", f"{win_rate:.1f}%")
+                
+                # Detailed table
+                st.dataframe(pnl_results.sort_values("pnl", ascending=False), use_container_width=True)
+                
+                # Visualizations
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    fig = px.bar(
+                        pnl_results.head(15),
+                        x="company_id",
+                        y="pnl",
+                        title="Top 15 P&L by Company",
+                        labels={"pnl": "P&L ($)", "company_id": "Company ID"},
+                        color="pnl",
+                        color_continuous_scale=["red", "yellow", "green"]
+                    )
+                    fig.update_xaxes(tickangle=45)
+                    st.plotly_chart(fig, use_container_width=True)
+                
+                with col2:
+                    fig = px.bar(
+                        pnl_results.head(15),
+                        x="company_id",
+                        y="pnl_pct",
+                        title="Top 15 P&L % by Company",
+                        labels={"pnl_pct": "P&L (%)", "company_id": "Company ID"},
+                        color="pnl_pct",
+                        color_continuous_scale=["red", "yellow", "green"]
+                    )
+                    fig.update_xaxes(tickangle=45)
+                    st.plotly_chart(fig, use_container_width=True)
+                
+                # P&L Distribution
+                st.subheader("📈 P&L Distribution")
+                fig = px.histogram(
+                    pnl_results,
+                    x="pnl",
+                    nbins=30,
+                    title="P&L Distribution Across Portfolio",
+                    labels={"pnl": "P&L ($)"}
+                )
+                st.plotly_chart(fig, use_container_width=True)
+                
+                # Factor Attribution (if available)
+                st.subheader("🔍 P&L Factor Attribution")
+                try:
+                    if "daily_return" in market_df_returns.columns:
+                        factor_attr = attribute_pnl_by_factor(market_df_returns)
+                        if len(factor_attr) > 0:
+                            st.dataframe(factor_attr, use_container_width=True)
+                        else:
+                            st.info("Factor attribution analysis requires additional market factors")
+                except Exception as e:
+                    st.info(f"Factor attribution not available: {e}")
+            else:
+                st.warning("No P&L data available")
+        else:
+            st.error("Market data missing required columns for P&L calculation")
+    
+    except Exception as e:
+        st.error(f"P&L analysis failed: {e}")
+        st.info("This feature requires market data. In production, this would connect to real market data feeds.")
+
+
 def sql_section(df_scored: pd.DataFrame):
     """SQL Queries Section - Show example SQL queries for risk analytics."""
     st.subheader("🗄️ SQL Queries for Risk Analytics")
@@ -691,20 +964,52 @@ def main():
     # Dynamic header with actual data
     layout_header(df_scored)
     
-    # Navigation
-    view = st.sidebar.selectbox(
-        "📋 Select View",
-        [
-            "Portfolio Overview",
-            "Peer Benchmarking", 
-            "Explainability (SHAP)",
-            "Scenario & Stress Testing",
-            "Risk Recommendations",
-            "Market Risk & VaR",
-            "P&L Attribution",
-            "SQL Queries & Export"
-        ]
+    # Enhanced Sidebar Navigation
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### 🎯 Navigation")
+    
+    # Add sidebar info
+    with st.sidebar:
+        st.markdown("""
+            <div style="padding: 1rem; background: rgba(102, 126, 234, 0.1); 
+                        border-radius: 8px; margin-bottom: 1rem;">
+                <p style="margin: 0; font-size: 0.85rem; color: #888;">
+                    <strong>Platform Status:</strong><br>
+                    ✅ ML Models Trained<br>
+                    ✅ {companies} Companies Analyzed<br>
+                    ✅ Real-time Analytics
+                </p>
+            </div>
+        """.format(companies=len(df_scored)), unsafe_allow_html=True)
+    
+    # Navigation with icons
+    view_options = {
+        "📊 Portfolio Overview": "Portfolio Overview",
+        "🏆 Peer Benchmarking": "Peer Benchmarking",
+        "🔍 Explainability (SHAP)": "Explainability (SHAP)",
+        "⚡ Scenario & Stress Testing": "Scenario & Stress Testing",
+        "💡 Risk Recommendations": "Risk Recommendations",
+        "📈 Market Risk & VaR": "Market Risk & VaR",
+        "💰 P&L Attribution": "P&L Attribution",
+        "🗄️ SQL Queries & Export": "SQL Queries & Export"
+    }
+    
+    view_display = st.sidebar.radio(
+        "Select Analysis View:",
+        list(view_options.keys()),
+        label_visibility="collapsed"
     )
+    view = view_options[view_display]
+    
+    # Add footer to sidebar
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("""
+        <div style="text-align: center; color: #888; font-size: 0.75rem; padding: 1rem;">
+            <strong>ERIP v2.0</strong><br>
+            Enterprise Risk Intelligence<br>
+            Powered by ML & Advanced Analytics
+        </div>
+    """, unsafe_allow_html=True)
     
     if view == "Portfolio Overview":
         portfolio_view(df_scored)
