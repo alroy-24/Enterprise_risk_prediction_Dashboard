@@ -615,7 +615,6 @@ Be ready to discuss:
 ---
 
 **Built with ❤️ for enterprise risk management and ML engineering excellence**
-# ## 🏁 **Summary**
 
 
 
