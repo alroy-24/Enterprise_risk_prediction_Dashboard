@@ -60,7 +60,7 @@ cp .env.example .env
 streamlit run src/app.py
 ```
 
-**🌐 Access**: http://localhost:8501
+**🌐 Access**: https://enterprise-risk-prediction-dashboard.onrender.com
 
 **📚 Full Setup Guide**: See [SETUP.md](SETUP.md)
 
