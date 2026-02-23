@@ -545,36 +545,6 @@ This project is licensed under the MIT License - see LICENSE file for details.
 - **Discussions**: [GitHub Discussions](https://github.com/alroy-24/Enterprise_risk_prediction_Dashboard/discussions)
 - **Email**: your.email@example.com
 
----
-
-## 🎓 **For Campus Interviews**
-
-### **Talking Points**
-
-1. **End-to-End ML**: "I built a complete ML pipeline from data ingestion to deployment"
-2. **Production-Ready**: "Implemented MLOps best practices including CI/CD, logging, and monitoring"
-3. **Business Impact**: "Created risk scores that help identify high-risk companies before default"
-4. **Explainable AI**: "Used SHAP to make models interpretable for regulatory compliance"
-5. **Full Stack**: "Built data engineering pipelines, ML models, and interactive dashboards"
-
-### **Interview Preparation**
-
-Be ready to discuss:
-- ✅ How you handled class imbalance
-- ✅ Feature engineering decisions
-- ✅ Model selection rationale
-- ✅ Deployment architecture
-- ✅ Trade-offs made (accuracy vs interpretability)
-- ✅ How you'd improve with more time/resources
-- ✅ Business impact & ROI
-
-### **Demo Script** (2 minutes)
-
-1. **Problem** (15s): "Predict which companies will face financial distress"
-2. **Solution** (30s): Show dashboard, ML predictions, SHAP values
-3. **Impact** (30s): "85% accuracy, helps banks reduce loan defaults"
-4. **Technical** (30s): "Full production setup with CI/CD, monitoring, logging"
-5. **Q&A** (15s): "Happy to dive deeper into any component"
 
 ---
 
