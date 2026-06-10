@@ -114,10 +114,11 @@ def build_preprocessor(df: pd.DataFrame):
         "roa",
     ]
     
-    # Additional risk metrics
+    # Additional risk metrics.
+    # NOTE: default_probability / default_buffer are deliberately excluded —
+    # the risk_flag target is thresholded on default_probability, so using
+    # them as features leaks the label into the model.
     risk_metrics = [
-        "default_probability",
-        "default_buffer",
         "incident_rate",
         "compliance_intensity",
         "dso",

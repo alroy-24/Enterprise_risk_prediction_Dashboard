@@ -1,5 +1,5 @@
 data:
-  source: "data/sample_financials.csv"   # can be replaced with "postgres"
+  source: "data/expanded_real_world_financials_fixed.csv"   # can be replaced with "postgres"
   postgres:
     uri: "postgresql://user:pass@host:5432/db"
     table: "financials"
